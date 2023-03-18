@@ -1,0 +1,18 @@
+Cerinta nr6
+Se considera urmatoarele clase:
+Materie ce contine atributele: denumire(sir de caractere de lungime fixa 50), optional(true=1/false=0)
+Student ce contine atributele: nrMatricol(int), nume(sir de caractere de lungime variabila), grupa(int).
+Curs ce contine atributele: mat(Materie), nrStudenti(int), St(vector de obiecte de tip Student).
+
+Definiti clasele si completati-le cu metode si supraincarcari de operatori pentru a permite in functia main() urmatoarele operatii:
+Materie m1(“POO”,0), m2(“Pedagogie”,1),m3;
+if (m1==m2) cout<<”Cursuri identice”;
+else cout<<”Denumiri diferite”;
+Student s1(12,“Ionescu”,133), s2;
+cin>>s2; cout<<s1<<s2;
+Curs c1(m1);
+c1+=s1;//adauga student s1 in lista studentilor cursului c1
+c1 = c1 + s2; //adauga student s2 in lista studentilor cursului c1
+Curs c2 = c1;
+cout<<c2;
+m3 = c2.materie(); cout<<m3;
