@@ -42,7 +42,6 @@ public:
     {
         return discount;
     }
-
     virtual void Afisare()
     {
         std::cout<<"Numele clientului: " << numeClient << std::endl<<"Suprafata utila: " << suprafataUtila << std::endl<< "Discount: " << discount << std::endl;
@@ -135,12 +134,13 @@ public:
     }
 };
 
-
+std::string nume="Prima mea agentie";
 ///Agentia imobiliara care va avea un vector de pointeri de tip Locuinta
 class AgentieImobiliara{
-private:
+protected:
     ///il facem unique pointer ca sa nu putem copia 2 agentii imobiliare, maxim sa le mutam
     std::vector<std::unique_ptr<Locuinta>> listaLocuinte;
+    static std::string nume;
 public:
     ///initial va fi gol
     AgentieImobiliara(){}
@@ -167,6 +167,8 @@ public:
         is >> numar;
         for (int i = 0; i < numar; i++)
         {
+            try
+            {
             std::cout << "Introduceti tipul locuintei (A pentru Apartament /C pentru Casa): ";
             char tip;
             is >> tip;
@@ -178,33 +180,23 @@ public:
                 float discount;
                 std::cout << "Introduceti etajul apartamentului: ";
                 is >> etaj;
+                if(typeid(etaj)!=typeid(int))
+                    throw std::runtime_error("Etaj imposibil!");
                 std::cout << "Introduceti numele clientului: ";
                 is >> numeClient;
                 std::cout << "Introduceti suprafata utila: ";
                 is >> suprafataUtila;
+                if(typeid(suprafataUtila)!=typeid(int))
+                    throw std::runtime_error("Suprafata imposibila!");
                 std::cout << "Introduceti discount-ul (%): ";
                 is >> discount;
-                try
-                {
-                    std::cout << "Introduceti discount-ul (%): ";
-                    is >> discount;
-                    if(discount<=0 || discount>100)
-                    {
-                        throw std::runtime_error("Discount imposibil!");
-                        std::cout<<std::endl<<"Discount:";
-                        is>>discount;
-                    }
-                }
-                catch (std::exception const &ex)
-                {
-                    std::cerr << "Eroare: " << ex.what() << std::endl;
-                    std::cout<<std::endl<<"Discount:";
-                        is>>discount;
-                }
+                if(discount<=0 || discount>100)
+                    throw std::runtime_error("Discount imposibil!");
                 std::unique_ptr <Locuinta> apartament = std::make_unique<Apartament>(numeClient, suprafataUtila, discount, etaj);
                 other.adauga(std::move(apartament));
             }
-            else if (tip == 'C')
+            else
+            if (tip == 'C')
             {
                 int suprafataCurte;
                 std::string numeClient;
@@ -212,30 +204,29 @@ public:
                 float discount;
                 std::cout << "Introduceti suprafata curtii casei: ";
                 is >> suprafataCurte;
+                if(typeid(suprafataCurte)!=typeid(int))
+                    throw std::runtime_error("Etaj imposibil!");
                 std::cout << "Introduceti numele clientului: ";
                 is >> numeClient;
                 std::cout << "Introduceti suprafata utila: ";
+                if(typeid(suprafataUtila)!=typeid(int))
+                    throw std::runtime_error("Suprafata imposibila!");
                 is >> suprafataUtila;
-                try
-                {
-                    std::cout << "Introduceti discount-ul (%): ";
-                    is >> discount;
-                    if(discount<=0 || discount>100)
-                    {
-                        throw std::runtime_error("Discount imposibil!");
-                        std::cout<<std::endl<<"Discount:";
-                        is>>discount;
-                    }
-                }
-                catch (std::exception const &ex)
-                {
-                    std::cerr << "Eroare: " << ex.what() << std::endl;
-                    std::cout<<std::endl<<"Discount:";
-                        is>>discount;
-                }
+                std::cout << "Introduceti discount-ul (%): ";
+                is >> discount;
+                if(discount<=0 || discount>100)
+                    throw std::runtime_error("Discount imposibil!");
                 std::unique_ptr<Locuinta> casa = std::make_unique<Casa>(numeClient, suprafataUtila, discount, suprafataCurte);
                 other.adauga(std::move(casa));
             }
+            else
+                throw std::runtime_error("Alegere imposibila!");
+
+            }
+            catch (std::exception const &ex)
+                  {
+                      std::cerr << "Eroare: " << ex.what() << std::endl;
+                  }
         }
         return is;
     }
