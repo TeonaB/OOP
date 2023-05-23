@@ -15,6 +15,7 @@ protected:
     std::string numeClient;
     int suprafataUtila;
     float discount;
+    friend class Builder_agentie;
 public:
     Locuinta(std::string numeClient, int suprafataUtila, float discount) : numeClient(numeClient), suprafataUtila(suprafataUtila), discount(discount) {};
     ~Locuinta() {};
@@ -179,6 +180,29 @@ public:
         return new Casa("Default", 10, 0,150);
     }
 };
+///design pattern builder
+class Builder_agentie
+{
+private:
+    Apartament loc;
+public:
+    Builder_agentie() = default;
+    Builder_agentie& numeClient(const std::string& tip) {
+        loc.numeClient = tip;
+        return *this;
+    }
+    Builder_agentie& suprafataUtila(int nr) {
+        loc.suprafataUtila = nr;
+        return *this;
+    }
+    Builder_agentie& discount(int nr) {
+        loc.discount = nr;
+        return *this;
+    }
+    Apartament build() {
+        return new Apartament(loc.numeClient, loc.suprafataUtila, loc.discount,0);
+    }
+};
 ///functie template
 template<typename U>
 U CalculTotal(std::vector<U> a)
@@ -227,7 +251,7 @@ public:
     }
 };
 
-Gestiune<float> gestiuneCastiguri;
+static Gestiune<float> gestiuneCastiguri;
 static std::string nume="Prima mea agentie";
 ///Agentia imobiliara care va avea un vector de pointeri de tip Locuinta
 class AgentieImobiliara
@@ -284,8 +308,9 @@ public:
             std::cout<<"2. Apartament vechi"<<std::endl;
             std::cout<<"3. Casa noua"<<std::endl;
             std::cout<<"4. Casa veche"<<std::endl;
+            std::cout<<"5. Locuinta cu lipsuri"<<std::endl;
             std::cin >>x;
-            while(x!=1 && x!=2 && x!=3 && x!=4)
+            while(x!=1 && x!=2 && x!=3 && x!=4 && x!=5)
             {
                 std::cout<<"Incearca alta optiune";
                 std::cin>>x;
@@ -317,6 +342,22 @@ public:
                 std::unique_ptr <Locuinta> apartament = std::make_unique<Casa>(locuinta);
                 other.adauga(std::move(apartament));
                 gestiuneCastiguri.adaugaCastig(id,3500);
+            }
+            else if(x == 5)
+            {
+                Builder_agentie loc;
+                std::string nume;
+                int sup, disc;
+                std::cout<< "Nume client: "<<std::endl;
+                std::cin>>nume;
+                std::cout<< "Suprafata utila: "<<std::endl;
+                std::cin>>sup;
+                std::cout<< "Discount: "<<std::endl;
+                std::cin>>disc;
+                Apartament loc2 = loc.numeClient(nume).suprafataUtila(sup).discount(disc).build();
+                std::unique_ptr <Locuinta> loc3 = std::make_unique<Apartament>(loc2);
+                other.adauga(std::move(loc3));
+                gestiuneCastiguri.adaugaCastig(id,loc2.CalculChirie(1500,1));
             }
             return true;
         }
@@ -395,7 +436,7 @@ public:
 
         for (int i = 0; i < other.getNumar(); i++)
         {
-            auto x=other.listaLocuinte[i]->CalculChirie(25000,1);
+            auto x=other.listaLocuinte[i]->CalculChirie(1500,1);
             gestiuneCastiguri.adaugaCastig(id,x);
         }
         return is;
@@ -418,7 +459,7 @@ public:
                 temp = reinterpret_cast<Apartament*>(other.listaLocuinte[i].get());
                 temp->Afisare();
             }
-            out<<"Chiria este de "<<other.listaLocuinte[i]->CalculChirie(25,1)<<std::endl;
+            out<<"Chiria este de "<<other.listaLocuinte[i]->CalculChirie(1500,1)<<std::endl;
             out<<std::endl;
         }
         return out;
